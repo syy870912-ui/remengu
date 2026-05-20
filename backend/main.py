@@ -144,6 +144,23 @@ STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 os.makedirs(os.path.join(STATIC_DIR, "ads"), exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+# --- Serve frontend static files (Railway deployment) ---
+import os as _os
+from fastapi.staticfiles import StaticFiles as _SF
+from fastapi.responses import FileResponse as _FR
+
+_FRONTEND_DIST = _os.path.join(_os.path.dirname(__file__), "..", "dist")
+if _os.path.isdir(_FRONTEND_DIST):
+    @app.get("/{fullpath:path}")
+    async def _serve_spa(fullpath: str):
+        _file = _os.path.join(_FRONTEND_DIST, fullpath)
+        if _os.path.isfile(_file) and not fullpath.endswith(".html"):
+            return _FR(_file)
+        _index = _os.path.join(_FRONTEND_DIST, "index.html")
+        if _os.path.isfile(_index):
+            return _FR(_index)
+        return {"detail": "Frontend not built. Run: npm run build"}, 404
+
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "message": "股析AI Backend is running"}

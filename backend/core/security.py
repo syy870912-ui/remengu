@@ -1,13 +1,14 @@
 """Security utilities: JWT token creation/verification and password hashing."""
 
+import os
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-# JWT settings (in production, move SECRET_KEY to environment variable)
-SECRET_KEY = "stock-analysis-secret-key-change-in-production"
+# JWT settings - read from environment variable in production
+SECRET_KEY = os.getenv("SECRET_KEY", "stock-analysis-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
 
