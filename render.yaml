@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: remengu
+    env: python
+    plan: free
+    region: oregon
+    buildCommand: bash build.sh
+    startCommand: cd backend && python -m uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: NODE_VERSION
+        value: 20
